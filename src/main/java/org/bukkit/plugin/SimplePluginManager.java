@@ -573,17 +573,8 @@ public final class SimplePluginManager implements PluginManager {
      * @param event Event details
      */
     public void callEvent(Event event) {
-        if (event.isAsynchronous() && this.server.isPrimaryThread()) {
-            throw new IllegalStateException(event.getEventName() + " may only be triggered asynchronously.");
-        }
-        if (!event.isAsynchronous() && !this.server.isPrimaryThread() && !this.server.isStopping()) {
-            throw new IllegalStateException(event.getEventName() + " may only be triggered synchronously.");
-        }
         HandlerList handlers = event.getHandlers();
         RegisteredListener[] listeners = handlers.getRegisteredListeners();
-        if (listeners.length == 0) {
-            return;
-        }
         for (RegisteredListener registration : listeners) {
             if (!registration.getPlugin().isEnabled()) {
                 continue;
@@ -726,7 +717,7 @@ public final class SimplePluginManager implements PluginManager {
 
     @Override
     public void recalculatePermissionDefaults(@NotNull Permission perm) {
-        if (perm != null && permissions.containsKey(perm.getName().toLowerCase(java.util.Locale.ENGLISH))) {
+        if (permissions.containsKey(perm.getName().toLowerCase(java.util.Locale.ENGLISH))) {
             defaultPerms.get(true).remove(perm);
             defaultPerms.get(false).remove(perm);
 
@@ -808,7 +799,7 @@ public final class SimplePluginManager implements PluginManager {
         Map<Permissible, Boolean> map = defSubs.get(op);
 
         if (map == null) {
-            map = new WeakHashMap<Permissible, Boolean>();
+            map = new WeakHashMap<>();
             defSubs.put(op, map);
         }
 
@@ -843,7 +834,7 @@ public final class SimplePluginManager implements PluginManager {
     @Override
     @NotNull
     public Set<Permission> getPermissions() {
-        return new HashSet<Permission>(permissions.values());
+        return new HashSet<>(permissions.values());
     }
 
     public boolean isTransitiveDepend(@NotNull PluginDescriptionFile plugin, @NotNull PluginDescriptionFile depend) {

@@ -607,7 +607,7 @@ project(':mohist') {
     task mohistJar(type: Jar, dependsOn: [genServerBinPatches, 'signUniversalJar']) {
         archiveClassifier = 'server'
         archiveExtension = 'jar'
-        archiveBaseName = 'mohist'
+        archiveBaseName = 'mohist-neptunex'
         archiveVersion = "1.16.5-" + MOHIST_VERSION
         destinationDirectory = file('build/libs')
         from sourceSets.fmllauncher.output
