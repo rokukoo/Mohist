@@ -20,7 +20,7 @@
  import java.awt.image.BufferedImage;
  import java.io.File;
  import java.io.IOException;
-@@ -37,19 +_,48 @@
+@@ -37,19 +_,50 @@
  import java.util.Date;
  import java.util.List;
  import java.util.Map;
@@ -46,6 +46,8 @@
 +import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 +import org.bukkit.event.server.ServerLoadEvent;
++import org.safebabe.mohistpro.AsyncScheduler;
++import org.spigotmc.AsyncCatcher;
 +import org.spigotmc.SlackActivityAccountant;
 +
 +import com.google.common.base.Splitter;
@@ -643,7 +645,7 @@
           } finally {
              bytebuf.release();
           }
-@@ -767,10 +_,22 @@
+@@ -767,10 +_,23 @@
     }
  
     protected void func_71240_o() {
@@ -663,6 +665,7 @@
 +      // Paper end
 +
 +      net.minecraftforge.fml.hooks.BasicEventHooks.onPreServerTick();
++      AsyncScheduler.runAllTasks(); // NeptuneX
        ++this.field_71315_w;
        this.func_71190_q(p_71217_1_);
        if (i - this.field_147142_T >= 5000000000L) {

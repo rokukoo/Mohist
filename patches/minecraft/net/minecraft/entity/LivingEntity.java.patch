@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/LivingEntity.java
 +++ b/net/minecraft/entity/LivingEntity.java
-@@ -1,26 +_,49 @@
+@@ -1,26 +_,50 @@
  package net.minecraft.entity;
  
 +import com.google.common.base.Function;
@@ -24,6 +24,7 @@
  import java.util.Random;
 +import java.util.Set;
  import java.util.UUID;
++import java.util.concurrent.CompletableFuture;
  import java.util.function.Predicate;
 +
  import javax.annotation.Nullable;
@@ -84,12 +85,13 @@
  import net.minecraft.util.math.vector.Vector3d;
  import net.minecraft.world.GameRules;
  import net.minecraft.world.World;
-@@ -113,11 +_,15 @@
+@@ -113,11 +_,16 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
 +import net.minecraftforge.common.ForgeHooks;
 +import org.bukkit.event.player.PlayerTeleportEvent;
++import org.safebabe.mohistpro.AsyncScheduler;
  
  public abstract class LivingEntity extends Entity {
     private static final UUID field_110156_b = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
@@ -369,7 +371,7 @@
              iterator.remove();
           }
  
-@@ -808,16 +_,44 @@
+@@ -808,16 +_,51 @@
     }
  
     public boolean func_195064_c(EffectInstance p_195064_1_) {
@@ -379,6 +381,13 @@
 +   }
 +
 +   public boolean addEffect(EffectInstance effectInstanceIn, EntityPotionEffectEvent.Cause cause) {
++      // NeptuneX start
++      if (Thread.currentThread() != this.func_184102_h().field_175590_aa) {
++         this.func_184102_h().server.getLogger().warning("Warning: Adding effect asynchronously! May cause behavior change.");
++         AsyncScheduler.addTask(() -> this.addEffect(effectInstanceIn, cause));
++         return false;
++      }
++      // NeptuneX end
 +      if (isTickingEffects) {
 +         effectsToProcess.add(new ProcessableEffect(effectInstanceIn, cause));
 +         return true;
