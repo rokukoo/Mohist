@@ -18,6 +18,49 @@
  import net.minecraft.crash.CrashReport;
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.crash.ReportedException;
+@@ -29,27 +_,27 @@
+    private final Function<CompoundNBT, T> field_205524_e;
+    private final Function<T, CompoundNBT> field_205525_f;
+    private final T field_205526_g;
+-   protected BitArray field_186021_b;
+-   private IPalette<T> field_186022_c;
+-   private int field_186024_e;
++   protected volatile BitArray field_186021_b;
++   private volatile IPalette<T> field_186022_c;
++   private volatile int field_186024_e;
+    private final ReentrantLock field_210461_j = new ReentrantLock();
+ 
+    public void func_210459_b() {
+-      if (this.field_210461_j.isLocked() && !this.field_210461_j.isHeldByCurrentThread()) {
+-         String s = Thread.getAllStackTraces().keySet().stream().filter(Objects::nonNull).map((p_210458_0_) -> {
+-            return p_210458_0_.getName() + ": \n\tat " + (String)Arrays.stream(p_210458_0_.getStackTrace()).map(Object::toString).collect(Collectors.joining("\n\tat "));
+-         }).collect(Collectors.joining("\n"));
+-         CrashReport crashreport = new CrashReport("Writing into PalettedContainer from multiple threads", new IllegalStateException());
+-         CrashReportCategory crashreportcategory = crashreport.func_85058_a("Thread dumps");
+-         crashreportcategory.func_71507_a("Thread dumps", s);
+-         throw new ReportedException(crashreport);
+-      } else {
+-         this.field_210461_j.lock();
+-      }
++//      if (this.lock.isLocked() && !this.lock.isHeldByCurrentThread()) {
++//         String s = Thread.getAllStackTraces().keySet().stream().filter(Objects::nonNull).map((p_210458_0_) -> {
++//            return p_210458_0_.getName() + ": \n\tat " + (String)Arrays.stream(p_210458_0_.getStackTrace()).map(Object::toString).collect(Collectors.joining("\n\tat "));
++//         }).collect(Collectors.joining("\n"));
++//         CrashReport crashreport = new CrashReport("Writing into PalettedContainer from multiple threads", new IllegalStateException());
++//         CrashReportCategory crashreportcategory = crashreport.addCategory("Thread dumps");
++//         crashreportcategory.setDetail("Thread dumps", s);
++//         throw new ReportedException(crashreport);
++//      } else {
++//         this.lock.lock();
++//      }
+    }
+ 
+    public void func_210460_c() {
+-      this.field_210461_j.unlock();
++//      this.lock.unlock();
+    }
+ 
+    public PalettedContainer(IPalette<T> p_i48961_1_, ObjectIntIdentityMap<T> p_i48961_2_, Function<CompoundNBT, T> p_i48961_3_, Function<T, CompoundNBT> p_i48961_4_, T p_i48961_5_) {
 @@ -61,13 +_,18 @@
        this.func_186012_b(4);
     }
