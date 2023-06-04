@@ -94,7 +94,7 @@ public class MohistMCStart {
 		System.setOut(new LoggingPrintStream("STDOUT", System.out, Level.INFO));
 		System.setErr(new LoggingPrintStream("STDERR", System.err, Level.ERROR));
 
-		UpdateUtils.versionCheck();
+		// UpdateUtils.versionCheck();
 
 		if(mainArgs.contains("-noserver"))
 			System.exit(0); //-noserver -> Do not run the Minecraft server, only let the installation running.

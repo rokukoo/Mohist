@@ -716,7 +716,11 @@ public final class SimplePluginManager implements PluginManager {
     }
 
     @Override
-    public void recalculatePermissionDefaults(@NotNull Permission perm) {
+    public void recalculatePermissionDefaults(@Nullable Permission perm) {
+        if (perm == null) {
+            server.getLogger().warning("Attempting to calculate permission defaults for null!");
+            return;
+        }
         if (permissions.containsKey(perm.getName().toLowerCase(java.util.Locale.ENGLISH))) {
             defaultPerms.get(true).remove(perm);
             defaultPerms.get(false).remove(perm);
@@ -725,7 +729,11 @@ public final class SimplePluginManager implements PluginManager {
         }
     }
 
-    private void calculatePermissionDefault(@NotNull Permission perm, boolean dirty) {
+    private void calculatePermissionDefault(@Nullable Permission perm, boolean dirty) {
+        if (perm == null) {
+            server.getLogger().warning("Attempting to calculate permission defaults for null!");
+            return;
+        }
         if ((perm.getDefault() == PermissionDefault.OP) || (perm.getDefault() == PermissionDefault.TRUE)) {
             defaultPerms.get(true).add(perm);
             if (dirty) {

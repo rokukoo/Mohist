@@ -39,6 +39,9 @@ if (System.getProperty("_JAVA_OPTIONS") == null) {
     System.out.println("If you want to disable this, you can set '_JAVA_OPTIONS' proprety in your environment variable")
 }
 
+def getCheckedOutGitCommitHash() {
+    'git rev-parse --verify --short HEAD'.execute().text.trim()
+}
 
 ext {
     JAR_SIGNER = null
@@ -48,7 +51,7 @@ ext {
     MCP_VERSION = '20210115.111550'
     SPI_VERSION = '3.2.0'
 
-    MOHIST_VERSION = JenkinsNumber.info()
+    MOHIST_VERSION = getCheckedOutGitCommitHash()
 }
 
 project(':mcp') {
