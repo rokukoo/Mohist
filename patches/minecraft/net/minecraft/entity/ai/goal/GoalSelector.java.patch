@@ -1,0 +1,32 @@
+--- a/net/minecraft/entity/ai/goal/GoalSelector.java
++++ b/net/minecraft/entity/ai/goal/GoalSelector.java
+@@ -1,10 +_,8 @@
+ package net.minecraft.entity.ai.goal;
+ 
+ import com.google.common.collect.Sets;
+-import java.util.EnumMap;
+-import java.util.EnumSet;
+-import java.util.Map;
+-import java.util.Set;
++
++import java.util.*;
+ import java.util.function.Supplier;
+ import java.util.stream.Stream;
+ import net.minecraft.profiler.IProfiler;
+@@ -22,7 +_,7 @@
+          return false;
+       }
+    };
+-   private final Map<Goal.Flag, PrioritizedGoal> field_220891_c = new EnumMap<>(Goal.Flag.class);
++   private final Map<Goal.Flag, PrioritizedGoal> field_220891_c = Collections.synchronizedMap(new EnumMap<>(Goal.Flag.class)); // NeptuneX - Made this field synchronized.
+    private final Set<PrioritizedGoal> field_220892_d = Sets.newLinkedHashSet();
+    private final Supplier<IProfiler> field_75781_c;
+    private final EnumSet<Goal.Flag> field_220893_f = EnumSet.noneOf(Goal.Flag.class);
+@@ -55,7 +_,6 @@
+          if (!p_220885_2_.func_220773_g()) {
+             this.field_220891_c.remove(p_220885_1_);
+          }
+-
+       });
+       iprofiler.func_76319_b();
+       iprofiler.func_76320_a("goalUpdate");
