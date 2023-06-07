@@ -41,7 +41,7 @@
  import net.minecraft.world.GameRules;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldSettings;
-@@ -71,31 +_,77 @@
+@@ -71,31 +_,75 @@
        OptionSpec<Integer> optionspec11 = optionparser.accepts("port").withRequiredArg().ofType(Integer.class).defaultsTo(-1);
        OptionSpec<String> optionspec12 = optionparser.accepts("serverId").withRequiredArg();
        OptionSpec<String> optionspec13 = optionparser.nonOptions();
@@ -76,8 +76,6 @@
 +                .defaultsTo(new File("paper.yml"))
 +                .describedAs("Yml file");
 +        // Paper end
-+
-+
  
        try {
           OptionSet optionset = optionparser.parse(p_main_0_);

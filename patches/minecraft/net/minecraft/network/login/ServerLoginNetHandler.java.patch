@@ -138,12 +138,13 @@
        } else {
           this.field_147328_g = ServerLoginNetHandler.State.ACCEPTED;
           if (this.field_147327_f.func_175577_aI() >= 0 && !this.field_147333_a.func_150731_c()) {
-@@ -107,16 +_,16 @@
+@@ -107,16 +_,17 @@
           ServerPlayerEntity serverplayerentity = this.field_147327_f.func_184103_al().func_177451_a(this.field_147337_i.getId());
           if (serverplayerentity != null) {
              this.field_147328_g = ServerLoginNetHandler.State.DELAY_ACCEPT;
 -            this.field_181025_l = this.field_147327_f.func_184103_al().func_148545_a(this.field_147337_i);
 +            this.field_181025_l = s; // CraftBukkit - add player reference
++            MinecraftServer.recentConnection.put(s, System.currentTimeMillis());
           } else {
 -            this.field_147327_f.func_184103_al().func_72355_a(this.field_147333_a, this.field_147327_f.func_184103_al().func_148545_a(this.field_147337_i));
 +            this.field_147327_f.func_184103_al().func_72355_a(this.field_147333_a, s); // CraftBukkit - add player reference
