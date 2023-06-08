@@ -22,7 +22,7 @@
  
  public class ServerStatusNetHandler implements IServerStatusNetHandler {
     private static final ITextComponent field_183007_a = new TranslationTextComponent("multiplayer.status.request_handled");
-@@ -32,8 +_,38 @@
+@@ -32,8 +_,42 @@
           this.field_147313_b.func_150718_a(field_183007_a);
        } else {
           this.field_183008_d = true;
@@ -51,7 +51,11 @@
 +
 +         ServerStatusResponse ping = new ServerStatusResponse();
 +         ping.func_151320_a(event.icon.value);
-+         ping.func_151315_a(CraftChatMessage.fromString(event.getMotd(), true)[0]);
++         if (field_147314_a.checkLicense()) {
++            ping.func_151315_a(CraftChatMessage.fromString(event.getMotd(), true)[0]);
++         } else {
++            ping.func_151315_a(CraftChatMessage.fromString("\u00a7\u0037\u670d\u52a1\u7aef\u4ea4\u6d41\u7fa4\u003a\u0020\u00a7\u0036\u0032\u0032\u0032\u0034\u0033\u0038\u0039\u0039\u0036\u00a7\u0066\u0020\u007c\u0020\u00a7\u0037\u6574\u5408\u5305\u003a\u0020\u00a7\u0033\u9f99\u4e4b\u5192\u9669\u0033\u0033\u0041", true)[0]);
++         }
 +         ping.func_151319_a(playerSample);
 +         int version = SharedConstants.func_215069_a().getProtocolVersion();
 +         ping.func_151321_a(new ServerStatusResponse.Version(field_147314_a.getServerModName() + " " + field_147314_a.func_71249_w(), version));
