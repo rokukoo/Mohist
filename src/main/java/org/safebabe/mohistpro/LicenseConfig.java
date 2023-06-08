@@ -7,16 +7,16 @@ import java.nio.file.Files;
 
 public class LicenseConfig {
 
-    public static File license = new File("neptuneX/LICENSE.txt");
+    public static File license = new File("neptuneX/LICENSE.bin");
 
     public static String getLicense() {
-        if (!license.exists()) return null;
+        if (!license.exists()) return "";
         try {
             return Files.readString(license.toPath(), Charset.defaultCharset()).trim();
         } catch (IOException e) {
             System.out.println("Unable to read MohistPro license!");
             e.printStackTrace();
-            return null;
+            return "";
         }
     }
 }

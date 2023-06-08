@@ -41,6 +41,14 @@
  import net.minecraft.world.GameRules;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldSettings;
+@@ -51,6 +_,7 @@
+ import net.minecraft.world.storage.ServerWorldInfo;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.safebabe.mohistpro.BuildInfo;
+ 
+ public class Main {
+    private static final Logger field_240759_a_ = LogManager.getLogger();
 @@ -71,31 +_,75 @@
        OptionSpec<Integer> optionspec11 = optionparser.accepts("port").withRequiredArg().ofType(Integer.class).defaultsTo(-1);
        OptionSpec<String> optionspec12 = optionparser.accepts("serverId").withRequiredArg();

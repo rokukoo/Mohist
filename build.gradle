@@ -628,6 +628,8 @@ project(':mohist') {
                             'Launcher-Agent-Class': 'com.mohistmc.util.JarLoader',
                             'Main-Class': 'net.minecraftforge.server.ServerMain',
                             'Class-Path': classpath.toString(),
+                            'Commit-Hash': MOHIST_VERSION,
+                            'Project-Version': 'v3.3A',
                             'ServerLaunchArgs': [
                                     '--gameDir',          '.',
                                     '--launchTarget',     'fmlserver',
