@@ -10,12 +10,13 @@
  import net.minecraft.util.text.TranslationTextComponent;
  
  public class KillCommand {
-@@ -22,7 +_,11 @@
+@@ -22,7 +_,12 @@
  
     private static int func_198519_a(CommandSource p_198519_0_, Collection<? extends Entity> p_198519_1_) {
        for(Entity entity : p_198519_1_) {
 -         entity.func_174812_G();
 +         if (entity instanceof PlayerEntity) {
++            entity.func_174812_G();
 +            ((PlayerEntity) entity).func_70645_a(DamageSource.field_76380_i); // NeptuneX - Fix /kill command not working.
 +         } else {
 +            entity.func_174812_G();

@@ -25,7 +25,7 @@
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.player.ServerPlayerEntity;
  import net.minecraft.network.IPacket;
-@@ -49,7 +_,7 @@
+@@ -49,12 +_,12 @@
  public class ServerChunkProvider extends AbstractChunkProvider {
     private static final List<ChunkStatus> field_217239_c = ChunkStatus.func_222582_a();
     private final TicketManager field_217240_d;
@@ -34,7 +34,13 @@
     public final ServerWorld field_73251_h;
     private final Thread field_217241_g;
     private final ServerWorldLightManager field_217242_h;
-@@ -80,6 +_,24 @@
+    private final ServerChunkProvider.ChunkExecutor field_217243_i;
+-   public final ChunkManager field_217237_a;
++   public ChunkManager field_217237_a;
+    private final DimensionSavedDataManager field_217244_j;
+    private long field_217245_k;
+    public boolean field_217246_l = true;
+@@ -80,12 +_,30 @@
        this.func_222869_l();
     }
  
@@ -59,7 +65,42 @@
     public ServerWorldLightManager func_212863_j_() {
        return this.field_217242_h;
     }
-@@ -125,9 +_,18 @@
+ 
+    @Nullable
+-   private ChunkHolder func_217213_a(long p_217213_1_) {
++   private synchronized ChunkHolder func_217213_a(long p_217213_1_) {
+       return this.field_217237_a.func_219219_b(p_217213_1_);
+    }
+ 
+@@ -93,7 +_,7 @@
+       return this.field_217237_a.func_219174_c();
+    }
+ 
+-   private void func_225315_a(long p_225315_1_, IChunk p_225315_3_, ChunkStatus p_225315_4_) {
++   private synchronized void func_225315_a(long p_225315_1_, IChunk p_225315_3_, ChunkStatus p_225315_4_) {
+       for(int i = 3; i > 0; --i) {
+          this.field_222875_n[i] = this.field_222875_n[i - 1];
+          this.field_222876_o[i] = this.field_222876_o[i - 1];
+@@ -106,12 +_,12 @@
+    }
+ 
+    @Nullable
+-   public IChunk func_212849_a_(int p_212849_1_, int p_212849_2_, ChunkStatus p_212849_3_, boolean p_212849_4_) {
+-      if (Thread.currentThread() != this.field_217241_g) {
+-         return CompletableFuture.supplyAsync(() -> {
+-            return this.func_212849_a_(p_212849_1_, p_212849_2_, p_212849_3_, p_212849_4_);
+-         }, this.field_217243_i).join();
+-      } else {
++   public synchronized IChunk func_212849_a_(int p_212849_1_, int p_212849_2_, ChunkStatus p_212849_3_, boolean p_212849_4_) {
++//      if (Thread.currentThread() != this.mainThread) {
++//         return CompletableFuture.supplyAsync(() -> {
++//            return this.getChunk(p_212849_1_, p_212849_2_, p_212849_3_, p_212849_4_);
++//         }, this.mainThreadProcessor).join();
++//      } else {
+          IProfiler iprofiler = this.field_73251_h.func_217381_Z();
+          iprofiler.func_230035_c_("getChunk");
+          long i = ChunkPos.func_77272_a(p_212849_1_, p_212849_2_);
+@@ -125,21 +_,28 @@
              }
           }
  
@@ -71,15 +112,45 @@
           iprofiler.func_230035_c_("getChunkCacheMiss");
           CompletableFuture<Either<IChunk, ChunkHolder.IChunkLoadingError>> completablefuture = this.func_217233_c(p_212849_1_, p_212849_2_, p_212849_3_, p_212849_4_);
 -         this.field_217243_i.func_213161_c(completablefuture::isDone);
+-         IChunk ichunk1 = completablefuture.join().map((p_222874_0_) -> {
+-            return p_222874_0_;
+-         }, (p_222870_1_) -> {
 +         if (!completablefuture.isDone()) { // Paper
 +            this.field_73251_h.timings.syncChunkLoad.startTiming(); // Paper
 +            this.field_217243_i.func_213161_c(completablefuture::isDone);
 +            this.field_73251_h.timings.syncChunkLoad.stopTiming(); // Paper
 +         } // Paper
-          IChunk ichunk1 = completablefuture.join().map((p_222874_0_) -> {
-             return p_222874_0_;
-          }, (p_222870_1_) -> {
-@@ -208,7 +_,15 @@
++         IChunk ichunk1 = completablefuture.join().map((p_222874_0_) -> p_222874_0_, (p_222870_1_) -> {
+             if (p_212849_4_) {
+-               throw (IllegalStateException)Util.func_229757_c_(new IllegalStateException("Chunk not there when requested: " + p_222870_1_));
++               throw Util.func_229757_c_(new IllegalStateException("Chunk not there when requested: " + p_222870_1_));
+             } else {
+                return null;
+             }
+          });
+          this.func_225315_a(i, ichunk1, p_212849_3_);
+          return ichunk1;
+-      }
++//      }
+    }
+ 
+    @Nullable
+@@ -186,7 +_,7 @@
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+-   public CompletableFuture<Either<IChunk, ChunkHolder.IChunkLoadingError>> func_217232_b(int p_217232_1_, int p_217232_2_, ChunkStatus p_217232_3_, boolean p_217232_4_) {
++   public synchronized CompletableFuture<Either<IChunk, ChunkHolder.IChunkLoadingError>> func_217232_b(int p_217232_1_, int p_217232_2_, ChunkStatus p_217232_3_, boolean p_217232_4_) {
+       boolean flag = Thread.currentThread() == this.field_217241_g;
+       CompletableFuture<Either<IChunk, ChunkHolder.IChunkLoadingError>> completablefuture;
+       if (flag) {
+@@ -203,12 +_,20 @@
+       return completablefuture;
+    }
+ 
+-   private CompletableFuture<Either<IChunk, ChunkHolder.IChunkLoadingError>> func_217233_c(int p_217233_1_, int p_217233_2_, ChunkStatus p_217233_3_, boolean p_217233_4_) {
++   private synchronized CompletableFuture<Either<IChunk, ChunkHolder.IChunkLoadingError>> func_217233_c(int p_217233_1_, int p_217233_2_, ChunkStatus p_217233_3_, boolean p_217233_4_) {
+       ChunkPos chunkpos = new ChunkPos(p_217233_1_, p_217233_2_);
        long i = chunkpos.func_201841_a();
        int j = 33 + ChunkStatus.func_222599_a(p_217233_3_);
        ChunkHolder chunkholder = this.func_217213_a(i);
@@ -96,15 +167,28 @@
           this.field_217240_d.func_219356_a(TicketType.field_219494_g, chunkpos, j, chunkpos);
           if (this.func_217224_a(chunkholder, j)) {
              IProfiler iprofiler = this.field_73251_h.func_217381_Z();
-@@ -226,7 +_,7 @@
+@@ -225,17 +_,17 @@
+       return this.func_217224_a(chunkholder, j) ? ChunkHolder.field_219307_b : chunkholder.func_219276_a(p_217233_3_, this.field_217237_a);
     }
  
-    private boolean func_217224_a(@Nullable ChunkHolder p_217224_1_, int p_217224_2_) {
+-   private boolean func_217224_a(@Nullable ChunkHolder p_217224_1_, int p_217224_2_) {
 -      return p_217224_1_ == null || p_217224_1_.func_219299_i() > p_217224_2_;
++   private synchronized boolean func_217224_a(@Nullable ChunkHolder p_217224_1_, int p_217224_2_) {
 +      return p_217224_1_ == null || p_217224_1_.field_219316_k > p_217224_2_; // CraftBukkit using oldTicketLevel for isLoaded checks
     }
  
-    public boolean func_73149_a(int p_73149_1_, int p_73149_2_) {
+-   public boolean func_73149_a(int p_73149_1_, int p_73149_2_) {
++   public synchronized boolean func_73149_a(int p_73149_1_, int p_73149_2_) {
+       ChunkHolder chunkholder = this.func_217213_a((new ChunkPos(p_73149_1_, p_73149_2_)).func_201841_a());
+       int i = 33 + ChunkStatus.func_222599_a(ChunkStatus.field_222617_m);
+       return !this.func_217224_a(chunkholder, i);
+    }
+ 
+-   public IBlockReader func_217202_b(int p_217202_1_, int p_217202_2_) {
++   public synchronized IBlockReader func_217202_b(int p_217202_1_, int p_217202_2_) {
+       long i = ChunkPos.func_77272_a(p_217202_1_, p_217202_2_);
+       ChunkHolder chunkholder = this.func_217213_a(i);
+       if (chunkholder == null) {
 @@ -292,7 +_,7 @@
        return this.func_222872_a(i, ChunkHolder::func_219296_a);
     }
@@ -114,9 +198,12 @@
        ChunkHolder chunkholder = this.func_217213_a(p_222872_1_);
        if (chunkholder == null) {
           return false;
-@@ -304,23 +_,51 @@
+@@ -302,25 +_,53 @@
+       }
+    }
  
-    public void func_217210_a(boolean p_217210_1_) {
+-   public void func_217210_a(boolean p_217210_1_) {
++   public synchronized void func_217210_a(boolean p_217210_1_) {
        this.func_217235_l();
 +      try (co.aikar.timings.Timing timed = field_73251_h.timings.chunkSaveData.startTiming()) { // Paper - Timings
        this.field_217237_a.func_219177_a(p_217210_1_);
@@ -138,7 +225,7 @@
     }
  
 +   // CraftBukkit start - modelled on below
-+   public void purgeUnload() {
++   public synchronized void purgeUnload() {
 +      this.field_73251_h.func_217381_Z().func_76320_a("purge");
 +      this.field_217240_d.func_219340_a();
 +      this.func_217235_l();

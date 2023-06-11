@@ -101,7 +101,7 @@ public class WorldTimingsHandler {
 
 		chunkLoad = Timings.ofSafe(name + "Chunk Load");
 		chunkLoadPopulate = Timings.ofSafe(name + "Chunk Load - Populate");
-		syncChunkLoad = Timings.ofSafe(name + "Sync Chunk Load");
+		syncChunkLoad = Timings.ofSafe(name + "Async Chunk Load");
 		chunkLoadLevelTimer = Timings.ofSafe(name + "Chunk Load - Load Level");
 		chunkIO = Timings.ofSafe(name + "Chunk Load - DiskIO");
 		chunkPostLoad = Timings.ofSafe(name + "Chunk Load - Post Load");
