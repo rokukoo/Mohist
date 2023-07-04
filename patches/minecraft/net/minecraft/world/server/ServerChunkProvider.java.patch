@@ -32,10 +32,12 @@
 -   public final ChunkGenerator field_186029_c;
 +   public ChunkGenerator field_186029_c;
     public final ServerWorld field_73251_h;
-    private final Thread field_217241_g;
+-   private final Thread field_217241_g;
++   public final Thread field_217241_g;
     private final ServerWorldLightManager field_217242_h;
-    private final ServerChunkProvider.ChunkExecutor field_217243_i;
+-   private final ServerChunkProvider.ChunkExecutor field_217243_i;
 -   public final ChunkManager field_217237_a;
++   public final ServerChunkProvider.ChunkExecutor field_217243_i;
 +   public ChunkManager field_217237_a;
     private final DimensionSavedDataManager field_217244_j;
     private long field_217245_k;
@@ -81,26 +83,16 @@
        for(int i = 3; i > 0; --i) {
           this.field_222875_n[i] = this.field_222875_n[i - 1];
           this.field_222876_o[i] = this.field_222876_o[i - 1];
-@@ -106,12 +_,12 @@
+@@ -106,7 +_,7 @@
     }
  
     @Nullable
 -   public IChunk func_212849_a_(int p_212849_1_, int p_212849_2_, ChunkStatus p_212849_3_, boolean p_212849_4_) {
--      if (Thread.currentThread() != this.field_217241_g) {
--         return CompletableFuture.supplyAsync(() -> {
--            return this.func_212849_a_(p_212849_1_, p_212849_2_, p_212849_3_, p_212849_4_);
--         }, this.field_217243_i).join();
--      } else {
 +   public synchronized IChunk func_212849_a_(int p_212849_1_, int p_212849_2_, ChunkStatus p_212849_3_, boolean p_212849_4_) {
-+//      if (Thread.currentThread() != this.mainThread) {
-+//         return CompletableFuture.supplyAsync(() -> {
-+//            return this.getChunk(p_212849_1_, p_212849_2_, p_212849_3_, p_212849_4_);
-+//         }, this.mainThreadProcessor).join();
-+//      } else {
-          IProfiler iprofiler = this.field_73251_h.func_217381_Z();
-          iprofiler.func_230035_c_("getChunk");
-          long i = ChunkPos.func_77272_a(p_212849_1_, p_212849_2_);
-@@ -125,21 +_,28 @@
+       if (Thread.currentThread() != this.field_217241_g) {
+          return CompletableFuture.supplyAsync(() -> {
+             return this.func_212849_a_(p_212849_1_, p_212849_2_, p_212849_3_, p_212849_4_);
+@@ -125,14 +_,21 @@
              }
           }
  
@@ -127,14 +119,6 @@
              } else {
                 return null;
              }
-          });
-          this.func_225315_a(i, ichunk1, p_212849_3_);
-          return ichunk1;
--      }
-+//      }
-    }
- 
-    @Nullable
 @@ -186,7 +_,7 @@
     }
  
