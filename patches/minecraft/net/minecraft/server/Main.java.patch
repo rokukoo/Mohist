@@ -41,17 +41,20 @@
  import net.minecraft.world.GameRules;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldSettings;
-@@ -51,6 +_,7 @@
+@@ -51,6 +_,8 @@
  import net.minecraft.world.storage.ServerWorldInfo;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.safebabe.mohistpro.BuildInfo;
++import org.safebabe.mohistpro.LicenseConfig;
  
  public class Main {
     private static final Logger field_240759_a_ = LogManager.getLogger();
-@@ -71,31 +_,75 @@
+@@ -70,32 +_,81 @@
+       OptionSpec<String> optionspec10 = optionparser.accepts("world").withRequiredArg();
        OptionSpec<Integer> optionspec11 = optionparser.accepts("port").withRequiredArg().ofType(Integer.class).defaultsTo(-1);
        OptionSpec<String> optionspec12 = optionparser.accepts("serverId").withRequiredArg();
++      OptionSpec<String> license = optionparser.accepts("license").withRequiredArg();
        OptionSpec<String> optionspec13 = optionparser.nonOptions();
 +      optionparser.accepts("allowUpdates").withRequiredArg().ofType(Boolean.class).defaultsTo(Boolean.TRUE); // Forge: allow mod updates to proceed
 +      optionparser.accepts("gameDir").withRequiredArg().ofType(File.class).defaultsTo(new File(".")); //Forge: Consume this argument, we use it in the launcher, and the client side.
@@ -109,6 +112,10 @@
 +         if (!servereula.func_154346_a()) {
 +            field_240759_a_.info(com.mohistmc.util.i18n.i18n.get("main.1"));
 +            return;
++         }
++
++         if (optionset.has(license)) {
++            LicenseConfig.licenseCode = optionset.valueOf(license);
 +         }
 +
           CrashReport.func_230188_h_();

@@ -15,9 +15,6 @@ public class LicenseConfig {
 
     public static String getLicense() {
         if (licenseCode != null) return licenseCode;
-        ServerMain.mainArgs.forEach(i -> {
-            if (i.startsWith("--license")) licenseCode = i.substring(9);
-        });
         if (!license.exists()) return "";
         try {
             return Files.readString(license.toPath(), Charset.defaultCharset()).trim();
